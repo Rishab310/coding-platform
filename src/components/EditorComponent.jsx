@@ -1,17 +1,47 @@
 import React, { Component } from 'react';
 import AceEditor from "react-ace";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import "ace-builds/src-min-noconflict/ext-searchbox";
+import "ace-builds/src-min-noconflict/ext-language_tools";
 
-import "ace-builds/src-noconflict/mode-java";
-import "ace-builds/src-noconflict/mode-c_cpp";
-import "ace-builds/src-noconflict/mode-python";
-import "ace-builds/src-noconflict/theme-dracula";
-import "ace-builds/src-noconflict/theme-dreamweaver";
-import "ace-builds/src-noconflict/theme-github";
-import "ace-builds/src-noconflict/snippets/c_cpp";
-import "ace-builds/src-noconflict/snippets/java";
-import "ace-builds/src-noconflict/snippets/python";
-import "ace-builds/src-noconflict/ext-language_tools"
+const languages = [
+    "javascript",
+    "java",
+    "python",
+    "xml",
+    "ruby",
+    "sass",
+    "markdown",
+    "mysql",
+    "json",
+    "html",
+    "handlebars",
+    "golang",
+    "csharp",
+    "elixir",
+    "typescript",
+    "css"
+];
+
+const themes = [
+    "monokai",
+    "github",
+    "tomorrow",
+    "kuroir",
+    "twilight",
+    "xcode",
+    "textmate",
+    "solarized_dark",
+    "solarized_light",
+    "terminal"
+];
+
+languages.forEach(lang => {
+    require(`ace-builds/src-noconflict/mode-${lang}`);
+    require(`ace-builds/src-noconflict/snippets/${lang}`);
+});
+
+themes.forEach(theme => require(`ace-builds/src-noconflict/theme-${theme}`));
 
 
 
