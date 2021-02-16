@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Editor from "./components/EditorComponent";
+import AceExample from "./components/AceComponent"; 
 import Problem from "./components/ProblemComponent";
 class App extends Component {
     render() {
@@ -12,6 +13,7 @@ class App extends Component {
                     </div>
                 </div>
                 <Editor />
+                <AceExample/>
             </div>
         );
     }

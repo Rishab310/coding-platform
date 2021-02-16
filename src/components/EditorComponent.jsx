@@ -5,6 +5,7 @@ import "ace-builds/src-min-noconflict/ext-searchbox";
 import "ace-builds/src-min-noconflict/ext-language_tools";
 
 const languages = [
+    "c_cpp",
     "javascript",
     "java",
     "python",
@@ -49,14 +50,25 @@ class Editor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dropdownOpen: false,
-            langName: "Java",
+            modeList: false,
+            themeList: false,
             mode: "java",
+            value: "defaultValue",
+            placeholder: "Placeholder Text",
+            theme: "monokai",
+            enableBasicAutocompletion: false,
+            enableLiveAutocompletion: false,
+            fontSize: 14,
+            showGutter: true,
+            showPrintMargin: true,
+            highlightActiveLine: true,
+            enableSnippets: false,
+            showLineNumbers: true
             // editorCode: "//Enter your code here",
         }
         this.onChange = this.onChange.bind(this);
-        this.toggle = this.toggle.bind(this);
-        this.select = this.select.bind(this);
+        this.setMode = this.setMode.bind(this);
+        this.setTheme = this.setTheme.bind(this);
     }
     onChange = (newValue) => {
         console.log("change", newValue);
@@ -64,19 +76,27 @@ class Editor extends Component {
         //     editorCode:{newValue}
         // });
     }
-    toggle = () => {
-        this.setState({
-            dropdownOpen: !this.state.dropdownOpen
-        });
-    }
+    
     select = (event) => {
         this.setState({
             dropdownOpen: !this.state.dropdownOpen,
-            langName: event.target.innerText,
             mode: event.target.value,
-            // editorCode: "//Enter your code here"
         });
         console.log(event.target.value);
+    }
+    setTheme(e) {
+        this.setState({
+            themeList: !this.state.themeList,
+            theme: e.target.value
+        });
+        console.log(e.target.value);
+    }
+    setMode(e) {
+        this.setState({
+            modeList: !this.state.modeList,
+            mode: e.target.value
+        });
+        console.log(e.target.value);
     }
     render() {
         return (
@@ -87,15 +107,52 @@ class Editor extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className=" d-flex col-10 col-sm-10 offset-sm-1 col-md-8 offset-md-2 ">
+                    <div className=" d-flex col-5 col-sm-5 offset-sm-1 col-md-4 offset-md-2 ">
                         <div className="px-3 py-1" >
-                            <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle} >
-                                <DropdownToggle color="" caret style={{ minwidth: "80px",textAlign:"left" }}>{this.state.langName} </DropdownToggle>
-                                <DropdownMenu>
-                                    <DropdownItem value="c_cpp" onClick={this.select}>C</DropdownItem>
-                                    <DropdownItem value="c_cpp" onClick={this.select}>C++</DropdownItem>
-                                    <DropdownItem value= "java" onClick={this.select}>Java</DropdownItem>
-                                    <DropdownItem value="python"onClick={this.select}>Python</DropdownItem>
+                            <Dropdown isOpen={this.state.modeList} toggle={()=> { this.setState({ modeList: !this.state.modeList }); }} >
+                                <DropdownToggle color="" caret style={{ minwidth: "80px",textAlign:"left" }}>{this.state.mode} </DropdownToggle>
+                                <DropdownMenu modifiers={{
+                                    setMaxHeight: { enabled: true, order: 890,
+                                        fn: (data) => {
+                                            return {
+                                                ...data,
+                                                styles: {
+                                                    ...data.styles,
+                                                    overflow: 'auto',
+                                                    maxHeight: '300px',
+                                                },
+                                            };
+                                        },
+                                    },
+                                }}>
+                                    {languages.map(lang => (
+                                        <DropdownItem key={lang} value={lang} onClick={this.setMode}>{lang}</DropdownItem>
+                                    ))}
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
+                    </div>
+                    <div className=" d-flex col-5 col-sm-5 offset-sm-1 col-md-4">
+                        <div className="px-3 py-1" >
+                            <Dropdown isOpen={this.state.themeList} toggle={() => { this.setState({ themeList: !this.state.themeList }); }}  >
+                                <DropdownToggle color="" caret style={{ minwidth: "80px",textAlign:"left" }}>{this.state.theme} </DropdownToggle>
+                                <DropdownMenu modifiers={{
+                                    setMaxHeight: { enabled: true, order: 890,
+                                        fn: (data) => {
+                                            return {
+                                                ...data,
+                                                styles: {
+                                                    ...data.styles,
+                                                    overflow: 'auto',
+                                                    maxHeight: '300px',
+                                                },
+                                            };
+                                        },
+                                    },
+                                }}>
+                                    {themes.map(theme => (
+                                        <DropdownItem key={theme} value={theme} onClick={this.setTheme}>{theme}</DropdownItem>
+                                    ))}
                                 </DropdownMenu>
                             </Dropdown>
                         </div>
@@ -107,7 +164,7 @@ class Editor extends Component {
                             style={{ height: "100%", width: "100%", minHeight: "500px", minWidth: "300px" }}>
                             <AceEditor
                                 mode={this.state.mode}
-                                theme="dreamweaver"
+                                theme={this.state.theme}
                                 onChange={this.onChange}
                                 name="aceEditor"
                                 height="100%"
