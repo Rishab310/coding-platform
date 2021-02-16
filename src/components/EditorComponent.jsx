@@ -53,7 +53,7 @@ class Editor extends Component {
             <div className="container m-2">
                 <div className="row ">
                     <div className="d-flex col-10 offset-1 col-sm-8 offset-sm-2 justify-content-center">
-                        <h4>Hello I am a Code Editor.</h4>
+                        <h4>Code Editor.</h4>
                     </div>
                 </div>
                 <div className="row">
