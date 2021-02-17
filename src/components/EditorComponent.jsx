@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import AceEditor from "react-ace";
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem  from 'reactstrap';
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import "ace-builds/src-min-noconflict/ext-language_tools";
 
@@ -45,6 +45,24 @@ languages.forEach(lang => {
 themes.forEach(theme => require(`ace-builds/src-noconflict/theme-${theme}`));
 
 
+const RenderDropdown = ({attrList,attr,attrFunc,toggle,field,name}) => {
+    return (
+        <Dropdown isOpen={attrList} toggle={toggle} >
+            <span> {name} : </span>
+            <DropdownToggle color="" caret style={{ minwidth: "80px", textAlign: "left" }}>{attr} </DropdownToggle>
+            <DropdownMenu modifiers={{
+                setMaxHeight: {
+                    enabled: true, order: 890,
+                    fn: (data) => { return { ...data, styles: { ...data.styles, overflow: 'auto', maxHeight: '300px', }, }; },
+                },
+            }}>
+                {field.map(option => (
+                    <DropdownItem key={option} value={option} onClick={attrFunc}>{option}</DropdownItem>
+                ))}
+            </DropdownMenu>
+        </Dropdown>
+    );
+}
 
 class Editor extends Component {
     constructor(props) {
@@ -53,16 +71,16 @@ class Editor extends Component {
             modeList: false,
             themeList: false,
             mode: "java",
-            value: "defaultValue",
-            placeholder: "Placeholder Text",
+            value: "",
+            placeholder: "// Enter Your Code here",
             theme: "monokai",
-            enableBasicAutocompletion: false,
-            enableLiveAutocompletion: false,
-            fontSize: 14,
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            fontSize: 15,
             showGutter: true,
             showPrintMargin: true,
             highlightActiveLine: true,
-            enableSnippets: false,
+            enableSnippets: true,
             showLineNumbers: true
             // editorCode: "//Enter your code here",
         }
@@ -76,7 +94,7 @@ class Editor extends Component {
         //     editorCode:{newValue}
         // });
     }
-    
+
     select = (event) => {
         this.setState({
             dropdownOpen: !this.state.dropdownOpen,
@@ -106,55 +124,19 @@ class Editor extends Component {
                         <h4>Code Editor.</h4>
                     </div>
                 </div>
-                <div className="row">
-                    <div className=" d-flex col-5 col-sm-5 offset-sm-1 col-md-4 offset-md-2 ">
-                        <div className="px-3 py-1" >
-                            <Dropdown isOpen={this.state.modeList} toggle={()=> { this.setState({ modeList: !this.state.modeList }); }} >
-                                <DropdownToggle color="" caret style={{ minwidth: "80px",textAlign:"left" }}>{this.state.mode} </DropdownToggle>
-                                <DropdownMenu modifiers={{
-                                    setMaxHeight: { enabled: true, order: 890,
-                                        fn: (data) => {
-                                            return {
-                                                ...data,
-                                                styles: {
-                                                    ...data.styles,
-                                                    overflow: 'auto',
-                                                    maxHeight: '300px',
-                                                },
-                                            };
-                                        },
-                                    },
-                                }}>
-                                    {languages.map(lang => (
-                                        <DropdownItem key={lang} value={lang} onClick={this.setMode}>{lang}</DropdownItem>
-                                    ))}
-                                </DropdownMenu>
-                            </Dropdown>
+                <div className="row d-flex justify-content-center">
+                    <div className="col-3 px-0 mx-0">
+                        <div className="mx-0" >
+                            <RenderDropdown attr={this.state.mode} attrList={this.state.modeList} attrFunc={this.setMode}
+                                field={languages} name="Languages"
+                                toggle={() => { this.setState({ modeList: !this.state.modeList }); }} />
                         </div>
                     </div>
-                    <div className=" d-flex col-5 col-sm-5 offset-sm-1 col-md-4">
-                        <div className="px-3 py-1" >
-                            <Dropdown isOpen={this.state.themeList} toggle={() => { this.setState({ themeList: !this.state.themeList }); }}  >
-                                <DropdownToggle color="" caret style={{ minwidth: "80px",textAlign:"left" }}>{this.state.theme} </DropdownToggle>
-                                <DropdownMenu modifiers={{
-                                    setMaxHeight: { enabled: true, order: 890,
-                                        fn: (data) => {
-                                            return {
-                                                ...data,
-                                                styles: {
-                                                    ...data.styles,
-                                                    overflow: 'auto',
-                                                    maxHeight: '300px',
-                                                },
-                                            };
-                                        },
-                                    },
-                                }}>
-                                    {themes.map(theme => (
-                                        <DropdownItem key={theme} value={theme} onClick={this.setTheme}>{theme}</DropdownItem>
-                                    ))}
-                                </DropdownMenu>
-                            </Dropdown>
+                    <div className="col-3 px-0 mx-0">
+                        <div className="mx-0" >
+                            <RenderDropdown attr={this.state.theme} attrList={this.state.themeList} attrFunc={this.setTheme}
+                                field={themes} name="Themes"
+                                toggle={() => { this.setState({ themeList: !this.state.themeList }); }} />
                         </div>
                     </div>
                 </div>
@@ -163,25 +145,36 @@ class Editor extends Component {
                         <div className="d-flex justify-content-center border border-dark "
                             style={{ height: "100%", width: "100%", minHeight: "500px", minWidth: "300px" }}>
                             <AceEditor
+                                placeholder={this.state.placeholder}
                                 mode={this.state.mode}
                                 theme={this.state.theme}
-                                onChange={this.onChange}
                                 name="aceEditor"
+                                onLoad={this.onLoad}
+                                onChange={this.onChange}
+                                onSelectionChange={this.onSelectionChange}
+                                onCursorChange={this.onCursorChange}
+                                onValidate={this.onValidate}
+                                value={this.state.value}
+                                fontSize={this.state.fontSize}
+                                showPrintMargin={this.state.showPrintMargin}
+                                showGutter={this.state.showGutter}
+                                highlightActiveLine={this.state.highlightActiveLine}
                                 height="100%"
                                 width="100%"
-                                // value={this.state.editorCode}
                                 enableSnippets="true"
                                 editorProps={{ $blockScrolling: true }}
                                 setOptions={{
-                                    enableBasicAutocompletion: true,
-                                    enableLiveAutocompletion: true,
-                                    enableSnippets: true,
+                                    useWorker: false,
+                                    enableBasicAutocompletion: this.state.enableBasicAutocompletion,
+                                    enableLiveAutocompletion: this.state.enableLiveAutocompletion,
+                                    enableSnippets: this.state.enableSnippets,
+                                    showLineNumbers: this.state.showLineNumbers,
+                                    tabSize: 4
                                 }}
                             />
                         </div>
                     </div>
                     <div>
-
                     </div>
                 </div>
             </div>
