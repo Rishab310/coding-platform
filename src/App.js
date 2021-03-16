@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import Editor from "./components/EditorComponent";
-import AceExample from "./components/AceComponent"; 
-import Problem from "./components/ProblemComponent";
+import Editor from "./components/codeEditor/EditorComponent";
+import AceExample from "./components/codeEditor/AceComponent"; 
+import Problem from "./components/codeEditor/ProblemComponent";
 class App extends Component {
     render() {
         return (
